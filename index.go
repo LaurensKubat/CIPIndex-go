@@ -12,7 +12,7 @@ type Value struct {
 
 // toCurrency converts the Value to a specific currency.
 func (v *Value) toCurrency(ticker string) float64 {
-	return v.Price * v.Currency.Value(ticker)
+	return v.Price * v.Currency.Convert(ticker).Base
 }
 
 // ExchangeCoin is the information about a cryptocurrency derived from

@@ -45,7 +45,7 @@ func TestCurrency_Value(t *testing.T) {
 		1,
 		rates,
 	}
-	converted := currency.Value("EUR")
+	converted := currency.Convert("EUR").Base
 	if currency.Base < converted {
 		t.Errorf("Are dollars worth more than EUROS!?")
 	}

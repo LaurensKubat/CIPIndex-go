@@ -45,11 +45,15 @@ type Currency struct {
 }
 
 // Value converts the currency
-func (c *Currency) Value(ticker string) float64 {
+func (c *Currency) Convert(ticker string) Currency {
 	//Requested price in base currency
 	requestedBase := c.Rates.Rates[ticker].Base
 	//Base currency in requested currency
-	return requestedBase / c.Base
+	return Currency{
+		Ticker: 	ticker,
+		Base: 		requestedBase,
+		Rates:		c.Rates,
+	}
 }
 
 // Rates is a wrapper around the open exchange api json response.
