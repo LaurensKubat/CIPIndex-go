@@ -3,12 +3,19 @@ package CIPIndex_go
 
 // Worked out definition for calculating the CIP index.
 type Value struct {
-	Base 		float64
+	Price 		float64
 	Currency 	Currency
 }
 
 func (v *Value) toCurrency (ticker string) float64{
-	return v.Base * v.Currency.Value(ticker)
+	return v.Price * v.Currency.Value(ticker)
+}
+
+// Values derived from a single exchange
+type ExchangeCoin struct {
+	Value	Value
+	Ticker 	string
+	Volume 	float64
 }
 
 // A coin is a traded cryptocurrency.
@@ -19,19 +26,39 @@ type Coin struct {
 	// Ticker, not required
 	Ticker 					string
 
-	// Value used in calculation
-	TES 	float64
+	// Total Effective supply: what is not locked.
+	TES 					float64
 
 	// Theoretical total supply, not required.
 	TotalSupply 			int
 	Marketcap 				float64
 }
+	//Initialization ready for loading
+	func (c *Coin)Init(currency Currency, ticker string){
+		c.Value.Currency = currency
+		c.Ticker = ticker
+	}
 
-// Returns the marketcap for a coin
-func (c *Coin) CalculateMarketcap() Value {
-	c.Marketcap = c.TES * c.Value.Base
-	return Value{c.Marketcap, c.Value.Currency}
-}
+	//Load a Coin from exchange + supply data
+	func (c *Coin) Load (coins []ExchangeCoin, TES float64){
+		var totalVolume float64
+		for _, coin := range coins{
+			totalVolume += coin.Volume
+		}
+
+		for _, coin := range coins{
+			weight := coin.Volume/totalVolume
+			c.Value.Price += coin.Value.toCurrency(c.Value.Currency.Ticker)*weight
+		}
+		c.TES = TES
+	}
+
+	// Returns the marketcap for a coin
+	func (c *Coin) CalculateMarketcap() Value {
+		c.Marketcap = c.TES * c.Value.Price
+		return Value{c.Marketcap, c.Value.Currency}
+	}
+
 
 // The Index as defined by Karel L. Kubat
 type CIPIndex struct {

@@ -30,7 +30,7 @@ func TestCoin_CalculateMarketcap(t *testing.T) {
 	rates, _ := GetRateservice()
 
 	value := Value{
-		Base:   		8000,
+		Price:   		8000,
 		Currency: 		Currency{
 			"USD",
 			1,
@@ -44,7 +44,7 @@ func TestCoin_CalculateMarketcap(t *testing.T) {
 		TES:		17000000,
 	}
 
-	if BTC.CalculateMarketcap().Base != 136000000000 {
+	if BTC.CalculateMarketcap().Price != 136000000000 {
 		t.Errorf("Marketcap not properly calculated")
 	}
 }
@@ -54,7 +54,7 @@ func TestCIPIndex_Value(t *testing.T) {
 	BTC := Coin {
 		Ticker:			"BTC",
 		Value:			Value{
-							Base:   	8000,
+							Price:   	8000,
 							Currency: 	Currency{
 									"USD",
 									1,
@@ -65,9 +65,9 @@ func TestCIPIndex_Value(t *testing.T) {
 	}
 
 	ETH := Coin {
-		Ticker:					"ETH",
-		Value:					Value{
-									Base:   		500,
+		Ticker:	"ETH",
+		Value:	Value{
+			Price:   		500,
 									Currency: 		Currency{
 										"USD",
 										1,
@@ -80,7 +80,7 @@ func TestCIPIndex_Value(t *testing.T) {
 	RIP := Coin {
 		Ticker:					"RIP",
 		Value:					Value{
-							Base:   		2,
+			Price:   		2,
 							Currency: 		Currency{
 								"USD",
 								1,
@@ -102,5 +102,39 @@ func TestCIPIndex_Value(t *testing.T) {
 	value := index.Value()
 	if int(value) != 5403 {
 		t.Errorf("Index not properly calculated!")
+	}
+}
+
+func TestCoin_Load(t *testing.T) {
+	rates, _ := GetRateservice()
+	USD := Currency{
+		"USD",
+		1,
+		rates,
+	}
+
+	BINANCE := ExchangeCoin{
+			Ticker:		"BTC",
+			Volume:		10000000,
+			Value:		Value{
+				8000,
+				USD,
+			},
+	}
+
+	BITFINEX := ExchangeCoin{
+		Ticker:		"BTC",
+		Volume:		10000000,
+		Value:		Value{
+			9000,
+			USD,
+		},
+	}
+
+	coin := Coin{}
+	coin.Init(USD, "BTC")
+	coin.Load([]ExchangeCoin{BINANCE, BITFINEX}, 17000000)
+	if coin.Value.Price != 8500{
+		t.Errorf("Coin initializaiton did not match expected value")
 	}
 }
