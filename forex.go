@@ -19,7 +19,7 @@ func (f *ForexClient) Init(OPEN_EXCHANGE_APP_ID string)	{
 func (f *ForexClient) NewRateService(base string, refresh int) *Rates {
 	f.client.Rates.SetBaseCurrency(base)
 	RatesDict := make(map[string]Currency)
-	rate := Rates{rates:RatesDict, base:base}
+	rate := Rates{Rates:RatesDict, Base:base}
 	go func() {
 		f.client.Cache.Expire(base)
 		response, err := f.client.Rates.All()
@@ -47,15 +47,15 @@ type Currency struct {
 // Returns the value in a requested currency
 func (c *Currency) Value(ticker string) float64 {
 	//Requested price in base currency
-	requestedBase := c.Rates.rates[ticker].Base
+	requestedBase := c.Rates.Rates[ticker].Base
 	//Base currency in requested currency
 	return requestedBase/c.Base
 }
 
 // Used to convert between fiat currencies using USD as a base currency
 type Rates struct {
-	rates 	map[string]Currency
-	base 	string
+	Rates 	map[string]Currency
+	Base 	string
 }
 
 func (r *Rates) load (openRates map[string]float64){
@@ -65,6 +65,6 @@ func (r *Rates) load (openRates map[string]float64){
 			Base:		rate,
 			Rates:  	r,
 		}
-		r.rates[ticker] = currency
+		r.Rates[ticker] = currency
 	}
 }

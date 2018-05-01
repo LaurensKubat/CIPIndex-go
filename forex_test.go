@@ -33,7 +33,7 @@ func TestForexClient_WatchRates(t *testing.T) {
 	client.Init(os.Getenv("OPEN_EXCHANGE_APP_ID"))
 	rates := client.NewRateService("USD", 15)
 	time.Sleep(3 * time.Second)
-	if rates.rates["EUR"].Ticker != "EUR"{
+	if rates.Rates["EUR"].Ticker != "EUR"{
 		t.Errorf("RateService failed")
 	}
 }
