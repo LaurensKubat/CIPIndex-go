@@ -1,15 +1,15 @@
 package CIPIndex_go
 
 import (
-	"testing"
-	"os"
 	"fmt"
 	"github.com/joho/godotenv"
 	"log"
+	"os"
+	"testing"
 	"time"
 )
 
-func init(){
+func init() {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal(err)
@@ -17,7 +17,7 @@ func init(){
 	}
 }
 
-func TestForexClient_Init(t *testing.T){
+func TestForexClient_Init(t *testing.T) {
 	client := ForexClient{}
 	client.Init(os.Getenv("OPEN_EXCHANGE_APP_ID"))
 	client.client.Rates.SetBaseCurrency("USD")
@@ -33,7 +33,7 @@ func TestForexClient_WatchRates(t *testing.T) {
 	client.Init(os.Getenv("OPEN_EXCHANGE_APP_ID"))
 	rates := client.NewRateService("USD", 15)
 	time.Sleep(3 * time.Second)
-	if rates.Rates["EUR"].Ticker != "EUR"{
+	if rates.Rates["EUR"].Ticker != "EUR" {
 		t.Errorf("RateService failed")
 	}
 }

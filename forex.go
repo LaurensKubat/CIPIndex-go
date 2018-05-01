@@ -7,11 +7,11 @@ import (
 
 // A forex client
 type ForexClient struct {
-	client  *dinero.Client
+	client *dinero.Client
 }
 
 // Initialize connection to open exchange.
-func (f *ForexClient) Init(OPEN_EXCHANGE_APP_ID string)	{
+func (f *ForexClient) Init(OPEN_EXCHANGE_APP_ID string) {
 	f.client = dinero.NewClient(OPEN_EXCHANGE_APP_ID)
 }
 
@@ -19,7 +19,7 @@ func (f *ForexClient) Init(OPEN_EXCHANGE_APP_ID string)	{
 func (f *ForexClient) NewRateService(base string, refresh int) *Rates {
 	f.client.Rates.SetBaseCurrency(base)
 	RatesDict := make(map[string]Currency)
-	rate := Rates{Rates:RatesDict, Base:base}
+	rate := Rates{Rates: RatesDict, Base: base}
 	go func() {
 		f.client.Cache.Expire(base)
 		response, err := f.client.Rates.All()
@@ -37,11 +37,11 @@ func (f *ForexClient) NewRateService(base string, refresh int) *Rates {
 
 // A forex traded currency compared to a base currency
 type Currency struct {
-	Ticker 		string
+	Ticker string
 	// Value of 1 currency in Base
-	Base		float64
+	Base float64
 	// Rates object storing the conversions for this currency
-	Rates		*Rates
+	Rates *Rates
 }
 
 // Returns the value in a requested currency
@@ -49,21 +49,21 @@ func (c *Currency) Value(ticker string) float64 {
 	//Requested price in base currency
 	requestedBase := c.Rates.Rates[ticker].Base
 	//Base currency in requested currency
-	return requestedBase/c.Base
+	return requestedBase / c.Base
 }
 
 // Used to convert between fiat currencies using USD as a base currency
 type Rates struct {
-	Rates 	map[string]Currency
-	Base 	string
+	Rates map[string]Currency
+	Base  string
 }
 
-func (r *Rates) load (openRates map[string]float64){
-	for ticker, rate := range openRates{
+func (r *Rates) load(openRates map[string]float64) {
+	for ticker, rate := range openRates {
 		currency := Currency{
-			Ticker:		ticker,
-			Base:		rate,
-			Rates:  	r,
+			Ticker: ticker,
+			Base:   rate,
+			Rates:  r,
 		}
 		r.Rates[ticker] = currency
 	}
