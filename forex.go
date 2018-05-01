@@ -10,6 +10,7 @@ type ForexClient struct {
 	client  *dinero.Client
 }
 
+// Initialize connection to open exchange.
 func (f *ForexClient) Init(OPEN_EXCHANGE_APP_ID string)	{
 	f.client = dinero.NewClient(OPEN_EXCHANGE_APP_ID)
 }
@@ -43,6 +44,7 @@ type Currency struct {
 	Rates		*Rates
 }
 
+// Returns the value in a requested currency
 func (c *Currency) Value(ticker string) float64 {
 	//Requested price in base currency
 	requestedBase := c.Rates.rates[ticker].Base
