@@ -4,11 +4,20 @@ package CIPIndex_go
 // Worked out definition for calculating the CIP index.
 
 
+
 // A coin is a traded cryptocurrency.
 type Coin struct {
+	// Value in USD, EURO or BTC depending on what you want
+	// (make sure all coins are in the same currency)
 	Value 					float64
+
+	// Ticker, not required
 	Ticker 					string
+
+	// Value used in calculation
 	TotalEffectiveSupply 	float64
+
+	// Theoretical total supply, not required.
 	TotalSupply 			int
 	Marketcap 				float64
 }
