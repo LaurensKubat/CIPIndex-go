@@ -1,4 +1,4 @@
-package CIPIndex_go
+package CIPIndex
 
 import (
 	"github.com/mattevans/dinero"

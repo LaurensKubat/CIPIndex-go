@@ -1,4 +1,4 @@
-package CIPIndex_go
+package CIPIndex
 
 // Worked out definition for calculating the CIP index.
 type Value struct {
@@ -70,7 +70,7 @@ type CIPIndex struct {
 // Returns the value for the index
 func (c *CIPIndex) Value() float64 {
 	c.TotalCap = 0
-	var index float64 = 0
+	var index float64
 
 	for _, coin := range c.Coins {
 		marketcap := coin.CalculateMarketcap()
