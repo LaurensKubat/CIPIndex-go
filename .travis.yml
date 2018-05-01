@@ -27,22 +27,12 @@ matrix:
 
 # Don't email me the results of the test runs.
 notifications:
-  email: false
-
-# Anything in before_script that returns a nonzero exit code will
-# flunk the build and immediately stop. It's sorta like having
-# set -e enabled in bash.
-before_script:
-  - GO_FILES=$(find . -iname '*.go' -type f | grep -v /vendor/) # All the .go files, excluding vendor/
-
-
+  email: true
 
 # script always run to completion (set +e). All of these code checks are must haves
 # in a modern Go project.
 script:
-  - test -z $(gofmt -s -l $GO_FILES)         # Fail if a .go file hasn't been formatted with gofmt
-  - go test -v -race ./...                   # Run all the tests with the race detector enabled
-  - go vet ./...                             # go vet is the official Go static analyzer
+  - go test -v
 
 environment:
   - OPEN_EXCHANGE_APP_ID=6dcf932844e64ba9a6adbb284eb71014
