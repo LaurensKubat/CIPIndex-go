@@ -31,9 +31,22 @@ func TestForexClient_Init(t *testing.T){
 func TestForexClient_WatchRates(t *testing.T) {
 	client := ForexClient{}
 	client.Init(os.Getenv("OPEN_EXCHANGE_APP_ID"))
-	rates := client.WatchRates("USD", 15)
-	for {
-		fmt.Println(rates)
-		time.Sleep(15*time.Second)
+	rates := client.NewRateService("USD", 15)
+	time.Sleep(3 * time.Second)
+	if rates.rates["EUR"].Ticker != "EUR"{
+		t.Errorf("RateService failed")
+	}
+}
+
+func TestCurrency_Value(t *testing.T) {
+	rates, _ := GetRateservice()
+	currency := Currency{
+		"USD",
+		1,
+		rates,
+	}
+	converted := currency.Value("EUR")
+	if currency.Base < converted {
+		t.Errorf("Are dollars worth more than EUROS!?")
 	}
 }

@@ -14,45 +14,55 @@ func (f *ForexClient) Init(OPEN_EXCHANGE_APP_ID string)	{
 	f.client = dinero.NewClient(OPEN_EXCHANGE_APP_ID)
 }
 
-func (f *ForexClient) WatchRates(base string, refresh int) *Rates {
+// Returns a rates object which gets periodically updates and invalidates the cache
+func (f *ForexClient) NewRateService(base string, refresh int) *Rates {
 	f.client.Rates.SetBaseCurrency(base)
 	RatesDict := make(map[string]Currency)
-	rate
+	rate := Rates{rates:RatesDict, base:base}
 	go func() {
+		f.client.Cache.Expire(base)
 		response, err := f.client.Rates.All()
 		if err != nil {
 			panic(err)
 		}
-		rates.load(response.Rates)
+		rate.load(response.Rates)
+		if refresh == 0 {
+			return
+		}
 		time.Sleep(time.Duration(refresh) * time.Second)
 	}()
-	return &rates
+	return &rate
 }
 
 // A forex traded currency compared to a base currency
 type Currency struct {
 	Ticker 		string
 	// Value of 1 currency in Base
-	Base	float64
+	Base		float64
+	// Rates object storing the conversions for this currency
+	Rates		*Rates
+}
+
+func (c *Currency) Value(ticker string) float64 {
+	//Requested price in base currency
+	requestedBase := c.Rates.rates[ticker].Base
+	//Base currency in requested currency
+	return requestedBase/c.Base
 }
 
 // Used to convert between fiat currencies using USD as a base currency
 type Rates struct {
 	rates 	map[string]Currency
+	base 	string
 }
 
 func (r *Rates) load (openRates map[string]float64){
 	for ticker, rate := range openRates{
 		currency := Currency{
-			Ticker:	ticker,
-			Base:	rate,
+			Ticker:		ticker,
+			Base:		rate,
+			Rates:  	r,
 		}
 		r.rates[ticker] = currency
 	}
-}
-
-
-// Used to easily convert a coins value.
-type Value struct {
-
 }
