@@ -5,17 +5,17 @@ import (
 	"time"
 )
 
-// A forex client
+// ForexClient is simply a wrapper around dinero.Client
 type ForexClient struct {
 	client *dinero.Client
 }
 
-// Initialize connection to open exchange.
+// Init opens a connection to open exchange.
 func (f *ForexClient) Init(OPEN_EXCHANGE_APP_ID string) {
 	f.client = dinero.NewClient(OPEN_EXCHANGE_APP_ID)
 }
 
-// Returns a rates object which gets periodically updates and invalidates the cache
+// NewRateService returns a rates object which gets periodically updates and invalidates the cache
 func (f *ForexClient) NewRateService(base string, refresh int) *Rates {
 	f.client.Rates.SetBaseCurrency(base)
 	RatesDict := make(map[string]Currency)
@@ -35,7 +35,7 @@ func (f *ForexClient) NewRateService(base string, refresh int) *Rates {
 	return &rate
 }
 
-// A forex traded currency compared to a base currency
+// Currency is a currency with internal conversions to different currencies
 type Currency struct {
 	Ticker string
 	// Value of 1 currency in Base
@@ -44,7 +44,7 @@ type Currency struct {
 	Rates *Rates
 }
 
-// Returns the value in a requested currency
+// Value converts the currency
 func (c *Currency) Value(ticker string) float64 {
 	//Requested price in base currency
 	requestedBase := c.Rates.Rates[ticker].Base
@@ -52,7 +52,7 @@ func (c *Currency) Value(ticker string) float64 {
 	return requestedBase / c.Base
 }
 
-// Used to convert between fiat currencies using USD as a base currency
+// Rates is a wrapper around the open exchange api json response.
 type Rates struct {
 	Rates map[string]Currency
 	Base  string

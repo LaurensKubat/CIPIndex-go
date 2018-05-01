@@ -1,23 +1,29 @@
+// Package CIPIndex implements easy calculation of the CIP index in combination
+// with currency conversions using the Open Exchange Rates API
+
 package CIPIndex
 
-// Worked out definition for calculating the CIP index.
+// Value is the combination of a currency and the amount of that
+// Currency
 type Value struct {
 	Price    float64
 	Currency Currency
 }
 
+// toCurrency converts the Value to a specific currency.
 func (v *Value) toCurrency(ticker string) float64 {
 	return v.Price * v.Currency.Value(ticker)
 }
 
-// Values derived from a single exchange
+// ExchangeCoin is the information about a cryptocurrency derived from
+// an exchange.
 type ExchangeCoin struct {
 	Value  Value
 	Ticker string
 	Volume float64
 }
 
-// A coin is a traded cryptocurrency.
+// Coin is the summarized value of a cryptocurrency.
 type Coin struct {
 	// Value in USD, EURO or BTC depending on what you want
 	Value Value
@@ -33,13 +39,13 @@ type Coin struct {
 	Marketcap   float64
 }
 
-//Initialization ready for loading
+// Init readies an nil Coin for loading.
 func (c *Coin) Init(currency Currency, ticker string) {
 	c.Value.Currency = currency
 	c.Ticker = ticker
 }
 
-//Load a Coin from exchange + supply data
+//Load generates a complete Coin struct from exchange coins and the coins supply
 func (c *Coin) Load(coins []ExchangeCoin, TES float64) {
 	var totalVolume float64
 	for _, coin := range coins {
@@ -53,13 +59,13 @@ func (c *Coin) Load(coins []ExchangeCoin, TES float64) {
 	c.TES = TES
 }
 
-// Returns the marketcap for a coin
+// CalculateMarketcap calculates the marketcap of a coin and returns the Value
 func (c *Coin) CalculateMarketcap() Value {
 	c.Marketcap = c.TES * c.Value.Price
 	return Value{c.Marketcap, c.Value.Currency}
 }
 
-// The Index as defined by Karel L. Kubat
+// CIPIndex is a representation of the index.
 type CIPIndex struct {
 	Coins    []Coin
 	TotalCap float64
@@ -67,7 +73,7 @@ type CIPIndex struct {
 	Currency Currency
 }
 
-// Returns the value for the index
+// Value returns the current point value of the CIPIndex.
 func (c *CIPIndex) Value() float64 {
 	c.TotalCap = 0
 	var index float64
