@@ -44,7 +44,7 @@ type Currency struct {
 	Rates *Rates
 }
 
-// Covert converts the currency
+// Convert converts the currency
 func (c *Currency) Convert(ticker string) Currency {
 	//Requested price in base currency
 	requestedBase := c.Rates.Rates[ticker].Base

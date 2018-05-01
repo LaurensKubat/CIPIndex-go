@@ -1,6 +1,5 @@
 // Package CIPIndex implements easy calculation of the CIP index in combination
 // with currency conversions using the Open Exchange Rates API
-
 package CIPIndex
 
 // Value is the combination of a currency and the amount of that
