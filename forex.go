@@ -50,9 +50,9 @@ func (c *Currency) Convert(ticker string) Currency {
 	requestedBase := c.Rates.Rates[ticker].Base
 	//Base currency in requested currency
 	return Currency{
-		Ticker: 	ticker,
-		Base: 		requestedBase,
-		Rates:		c.Rates,
+		Ticker: ticker,
+		Base:   requestedBase,
+		Rates:  c.Rates,
 	}
 }
 
