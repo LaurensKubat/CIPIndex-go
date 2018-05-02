@@ -21,7 +21,6 @@ func (f *ForexClient) NewRateService(base string, refresh int) *Rates {
 	RatesDict := make(map[string]Currency)
 	rate := Rates{Rates: RatesDict, Base: base}
 	go func() {
-		f.client.Cache.Expire(base)
 		response, err := f.client.Rates.All()
 		if err != nil {
 			panic(err)
@@ -31,6 +30,7 @@ func (f *ForexClient) NewRateService(base string, refresh int) *Rates {
 			return
 		}
 		time.Sleep(time.Duration(refresh) * time.Second)
+		f.client.Cache.Expire(base)
 	}()
 	return &rate
 }
