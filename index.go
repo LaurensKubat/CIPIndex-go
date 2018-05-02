@@ -67,7 +67,7 @@ func (c *Coin) MarshalBinary() ([]byte, error) {
 	return json.Marshal(c)
 }
 
-func (c *Coin) LoadfromBin(in []byte) error {
+func (c *Coin) Load(in []byte) error {
 	if err := json.Unmarshal(in, &c); err != nil {
 		return err
 	}
@@ -81,7 +81,7 @@ func (c *Coin) Init(currency Currency, ticker string) {
 }
 
 //Load generates a complete Coin struct from exchange coins and the coins supply
-func (c *Coin) Load(coins []ExchangeCoin, TES float64) {
+func (c *Coin) LoadExchangeCoins(coins []ExchangeCoin, TES float64) {
 	var totalVolume float64
 	for _, coin := range coins {
 		totalVolume += coin.Volume

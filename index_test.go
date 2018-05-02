@@ -88,7 +88,7 @@ func TestCIPIndex_Value(t *testing.T) {
 		TES: 10000000000,
 	}
 
-	index := CIPIndex{
+	index := CIPIndex {
 		Coins: []Coin{BTC, ETH, RIP},
 		Currency: Currency{
 			Ticker: "USD",
@@ -131,7 +131,7 @@ func TestCoin_Load(t *testing.T) {
 
 	coin := Coin{}
 	coin.Init(USD, "BTC")
-	coin.Load([]ExchangeCoin{BINANCE, BITFINEX}, 17000000)
+	coin.LoadExchangeCoins([]ExchangeCoin{BINANCE, BITFINEX}, 17000000)
 	if coin.Value.Price != 8500 {
 		t.Errorf("Coin initializaiton did not match expected value")
 	}
