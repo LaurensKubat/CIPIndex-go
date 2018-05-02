@@ -19,8 +19,8 @@ func (f *ForexClient) Init(OPEN_EXCHANGE_APP_ID string) {
 // NewRateService returns a rates object which gets periodically updates and invalidates the cache
 func (f *ForexClient) NewRateService(base string, refresh int) *Rates {
 	f.client.Rates.SetBaseCurrency(base)
-	RatesDict := make(map[string]Currency)
-	rate := Rates{Rates: RatesDict, Base: base}
+	RatesDict := map[string]float64{}
+	rate := Rates{Rates:RatesDict, Base: base}
 	go func() {
 		response, err := f.client.Rates.All()
 		if err != nil {
@@ -46,6 +46,7 @@ type Currency struct {
 }
 
 func (c *Currency) MarshalBinary() ([]byte, error) {
+	//First we convert to the dump.
 	return json.Marshal(c)
 }
 
@@ -59,7 +60,7 @@ func (c *Currency) Load(in []byte) error {
 // Convert converts the currency
 func (c *Currency) Convert(ticker string) Currency {
 	//Requested price in base currency
-	requestedBase := c.Rates.Rates[ticker].Base
+	requestedBase := c.Rates.Rates[ticker]
 	//Base currency in requested currency
 	return Currency{
 		Ticker: ticker,
@@ -71,29 +72,21 @@ func (c *Currency) Convert(ticker string) Currency {
 
 // Rates is a wrapper around the open exchange api json response.
 type Rates struct {
-	Rates map[string]Currency
+	Rates map[string]float64
 	Base  string
 }
 
-func (r *Rates) MarshalBinary() ([]byte, error) {
+func (r Rates) MarshalBinary() ([]byte, error) {
 	return json.Marshal(r)
 }
 
-func (r *Rates) LoadfromBin(in []byte) error {
+func (r Rates) Load(in []byte) error {
 	if err := json.Unmarshal(in, &r); err != nil {
 		return err
 	}
 	return nil
 }
 
-
 func (r *Rates) load(openRates map[string]float64) {
-	for ticker, rate := range openRates {
-		currency := Currency{
-			Ticker: ticker,
-			Base:   rate,
-			Rates:  r,
-		}
-		r.Rates[ticker] = currency
-	}
+	r.Rates = openRates
 }
