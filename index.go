@@ -2,12 +2,26 @@
 // with currency conversions using the Open Exchange Rates API
 package CIPIndex
 
+import "encoding/json"
+
 // Value is the combination of a currency and the amount of that
 // Currency
 type Value struct {
 	Price    float64
 	Currency Currency
 }
+
+func (c *Value) MarshalBinary() ([]byte, error) {
+	return json.Marshal(c)
+}
+
+func (c *Value) Load(in []byte) error {
+	if err := json.Unmarshal(in, &c); err != nil {
+		return err
+	}
+	return nil
+}
+
 
 // toCurrency converts the Value to a specific currency.
 func (v *Value) toCurrency(ticker string) float64 {
@@ -20,6 +34,17 @@ type ExchangeCoin struct {
 	Value  Value
 	Ticker string
 	Volume float64
+}
+
+func (c *ExchangeCoin) MarshalBinary() ([]byte, error) {
+	return json.Marshal(c)
+}
+
+func (c *ExchangeCoin) Load(in []byte) error {
+	if err := json.Unmarshal(in, &c); err != nil {
+		return err
+	}
+	return nil
 }
 
 // Coin is the summarized value of a cryptocurrency.
@@ -36,6 +61,17 @@ type Coin struct {
 	// Theoretical total supply, not required.
 	TotalSupply int
 	Marketcap   float64
+}
+
+func (c *Coin) MarshalBinary() ([]byte, error) {
+	return json.Marshal(c)
+}
+
+func (c *Coin) LoadfromBin(in []byte) error {
+	if err := json.Unmarshal(in, &c); err != nil {
+		return err
+	}
+	return nil
 }
 
 // Init readies an nil Coin for loading.
@@ -70,6 +106,17 @@ type CIPIndex struct {
 	TotalCap float64
 	// Main currency you use for the index
 	Currency Currency
+}
+
+func (c *CIPIndex) MarshalBinary() ([]byte, error) {
+	return json.Marshal(c)
+}
+
+func (c *CIPIndex) Load(in []byte) error {
+	if err := json.Unmarshal(in, &c); err != nil {
+		return err
+	}
+	return nil
 }
 
 // Value returns the current point value of the CIPIndex.

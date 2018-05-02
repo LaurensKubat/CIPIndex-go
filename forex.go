@@ -3,6 +3,7 @@ package CIPIndex
 import (
 	"github.com/mattevans/dinero"
 	"time"
+	"encoding/json"
 )
 
 // ForexClient is simply a wrapper around dinero.Client
@@ -44,6 +45,17 @@ type Currency struct {
 	Rates *Rates
 }
 
+func (c *Currency) MarshalBinary() ([]byte, error) {
+	return json.Marshal(c)
+}
+
+func (c *Currency) Load(in []byte) error {
+	if err := json.Unmarshal(in, &c); err != nil {
+		return err
+	}
+	return nil
+}
+
 // Convert converts the currency
 func (c *Currency) Convert(ticker string) Currency {
 	//Requested price in base currency
@@ -56,11 +68,24 @@ func (c *Currency) Convert(ticker string) Currency {
 	}
 }
 
+
 // Rates is a wrapper around the open exchange api json response.
 type Rates struct {
 	Rates map[string]Currency
 	Base  string
 }
+
+func (r *Rates) MarshalBinary() ([]byte, error) {
+	return json.Marshal(r)
+}
+
+func (r *Rates) LoadfromBin(in []byte) error {
+	if err := json.Unmarshal(in, &r); err != nil {
+		return err
+	}
+	return nil
+}
+
 
 func (r *Rates) load(openRates map[string]float64) {
 	for ticker, rate := range openRates {
